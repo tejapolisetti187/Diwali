@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Two Lamps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Mukta:wght@300;400;600&display=swap">
+<style>
+/* Layout: one night-sky column. Two diyas sit far apart on one screen; a spark crosses the gap and lights the second. */
+:root {
+  --night: #120a14;
+  --night-2: #1f1022;
+  --marigold: #ffb627;
+  --flame: #ff7a1a;
+  --rose: #e8456b;
+  --cream: #fbe9cf;
+  --muted: #c9aa95;
+  --clay: #8a3b1f;
+  --display: "Rozha One", Georgia, "Times New Roman", serif;
+  --body: "Mukta", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; overflow-x: hidden; }
+button { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.frame, .lamps { -webkit-tap-highlight-color: transparent; }
+body {
+  background:
+    radial-gradient(60% 40% at 50% 0%, rgba(232,69,107,.16), transparent 70%),
+    radial-gradient(50% 35% at 50% 100%, rgba(255,182,39,.10), transparent 70%),
+    var(--night);
+  color: var(--cream);
+  font-family: var(--body);
+  font-weight: 300;
+  line-height: 1.6;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-block: 0 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: hidden;
+}
+#fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+.wrap { max-width: 720px; margin: 0 auto; }
+
+/* string of lights */
+.string { display: flex; justify-content: space-between; padding: 14px 4px 0; border-top: 0; position: relative; }
+.string::before { content: ""; position: absolute; left: 0; right: 0; top: 10px; height: 1px; background: rgba(251,233,207,.18); }
+.bulb { width: 9px; height: 9px; border-radius: 50%; background: #3a2536; margin-top: 6px; transition: background .5s, box-shadow .5s; }
+.bulb:nth-child(3n+1).on { background: var(--marigold); box-shadow: 0 0 12px 3px rgba(255,182,39,.7); }
+.bulb:nth-child(3n+2).on { background: var(--flame); box-shadow: 0 0 12px 3px rgba(255,122,26,.7); }
+.bulb:nth-child(3n).on { background: var(--rose); box-shadow: 0 0 12px 3px rgba(232,69,107,.7); }
+.bulb.on { animation: twinkle 2.6s ease-in-out infinite; }
+.bulb:nth-child(even).on { animation-delay: -1.3s; }
+@keyframes twinkle { 50% { opacity: .55; } }
+
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(2.4rem, 9vw, 4.2rem); line-height: 1.05; margin: 44px 0 10px; text-align: left; text-wrap: balance; color: var(--cream); }
+.kicker { font-size: .78rem; letter-spacing: .22em; text-transform: uppercase; color: var(--marigold); margin: 36px 0 0; }
+.sub { max-width: 46ch; color: var(--muted); font-size: 1.05rem; margin: 0 0 8px; }
+
+/* the two lamps */
+.lamps { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 34px 0 10px; }
+.lamp { position: relative; text-align: center; }
+.lamp svg { width: min(100%, 230px); height: auto; overflow: visible; }
+.glow { position: absolute; left: 50%; top: 18%; width: 150%; aspect-ratio: 1; transform: translate(-50%, -50%) scale(.3); background: radial-gradient(circle, rgba(255,182,39,.5), rgba(255,122,26,.18) 40%, transparent 68%); opacity: 0; transition: opacity 1.2s, transform 1.4s cubic-bezier(.2,.7,.2,1); pointer-events: none; }
+.lamp.lit .glow { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.flame { transform-origin: 100px 64px; transform: scale(0); transition: transform .8s cubic-bezier(.3,1.6,.5,1); }
+.lamp.lit .flame { transform: scale(1); animation: flick 1.6s ease-in-out .8s infinite; }
+.flame-in { transform-origin: 100px 64px; }
+@keyframes flick { 0%,100% { transform: scale(1) rotate(0); } 25% { transform: scale(1.05,.96) rotate(-2deg); } 55% { transform: scale(.96,1.06) rotate(1.5deg); } 80% { transform: scale(1.03,.98) rotate(-1deg); } }
+.tag { display: block; margin-top: 2px; font-size: .78rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.lamp.lit .tag { color: var(--marigold); }
+.path { position: absolute; left: 22%; right: 22%; top: 16%; height: 0; border-top: 1px dashed rgba(251,233,207,.3); }
+.spark { position: absolute; left: 0; top: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: #fff3c9; box-shadow: 0 0 18px 8px rgba(255,182,39,.9), 0 0 40px 16px rgba(255,122,26,.5); opacity: 0; pointer-events: none; z-index: 3; }
+
+/* button */
+.cta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 18px; }
+button.cta { font-family: var(--body); font-weight: 600; font-size: 1.05rem; color: #2a1208; background: linear-gradient(180deg, #ffd166, var(--marigold) 55%, var(--flame)); border: 0; border-radius: 999px; padding: 15px 30px; cursor: pointer; position: relative; overflow: hidden; box-shadow: 0 8px 30px rgba(255,122,26,.35), inset 0 1px 0 rgba(255,255,255,.5); transition: transform .15s, box-shadow .2s; }
+button.cta:hover { transform: translateY(-2px); box-shadow: 0 12px 38px rgba(255,122,26,.5), inset 0 1px 0 rgba(255,255,255,.5); }
+button.cta:active { transform: scale(.96); }
+button.cta:focus-visible { outline: 3px solid var(--cream); outline-offset: 4px; }
+button.cta .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,.55); transform: scale(0); animation: rip .7s ease-out forwards; pointer-events: none; }
+@keyframes rip { to { transform: scale(4); opacity: 0; } }
+button.mute { font-family: var(--body); font-size: .9rem; color: var(--cream); background: transparent; border: 1px solid rgba(251,233,207,.35); border-radius: 999px; padding: 10px 18px; cursor: pointer; }
+button.mute:hover { border-color: var(--marigold); color: var(--marigold); }
+button.mute:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
+.count { color: var(--muted); font-size: .92rem; font-variant-numeric: tabular-nums; }
+
+/* surprise */
+#surprise { margin-top: 56px; }
+#surprise[hidden] { display: none !important; }
+.reveal > * { opacity: 0; transform: translateY(18px); animation: rise .9s cubic-bezier(.2,.7,.2,1) forwards; }
+.reveal > *:nth-child(2) { animation-delay: .25s; }
+.reveal > *:nth-child(3) { animation-delay: .5s; }
+.reveal > *:nth-child(4) { animation-delay: .75s; }
+@keyframes rise { to { opacity: 1; transform: none; } }
+
+.photos { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.frame { position: relative; aspect-ratio: 3 / 4; max-width: 100%; border-radius: 999px 999px 14px 14px; padding: 7px; background: linear-gradient(160deg, var(--marigold), var(--flame) 45%, var(--rose)); box-shadow: 0 0 40px rgba(255,122,26,.35); cursor: pointer; }
+figure:nth-child(2) .frame { margin-top: 28px; }
+.frame .in { width: 100%; height: 100%; border-radius: 999px 999px 8px 8px; background: radial-gradient(circle at 50% 35%, #3a1d34, var(--night-2)); overflow: hidden; display: grid; place-items: center; text-align: center; color: var(--muted); font-size: .85rem; padding: 12px; }
+.frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.frame .in span { max-width: 12ch; }
+.cap { text-align: center; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-top: 10px; }
+
+.letter { margin-top: 44px; padding: 28px 24px; border-radius: 6px; background: linear-gradient(180deg, rgba(251,233,207,.08), rgba(251,233,207,.03)); border: 1px solid rgba(255,182,39,.28); }
+.letter h2 { font-family: var(--display); font-weight: 400; font-size: clamp(1.6rem, 6vw, 2.2rem); margin: 0 0 14px; color: var(--marigold); text-wrap: balance; }
+.letter p { margin: 0 0 14px; max-width: 58ch; font-size: 1.08rem; }
+.sign { font-family: var(--display); font-size: 1.5rem; color: var(--cream); margin-top: 6px; }
+.foot { margin-top: 40px; text-align: center; color: var(--muted); font-size: .85rem; letter-spacing: .12em; }
+
+@media (max-width: 600px) {
+  .kicker { margin-top: 26px; }
+  h1 { margin-top: 30px; }
+  .sub { font-size: 1rem; }
+  .lamps { margin-top: 24px; gap: 4px; }
+  .path { left: 24%; right: 24%; }
+  .bulb { width: 7px; height: 7px; }
+  .cta-row { flex-direction: column; align-items: stretch; gap: 12px; }
+  button.cta { width: 100%; padding: 17px 20px; font-size: 1.1rem; }
+  button.mute { width: 100%; padding: 13px 18px; }
+  .count { text-align: center; }
+  #surprise { margin-top: 40px; }
+  .photos { gap: 12px; }
+  figure:nth-child(2) .frame { margin-top: 18px; }
+  .letter { padding: 22px 18px; margin-top: 34px; }
+  .letter p { font-size: 1rem; }
+}
+@media (max-width: 340px) { .photos { grid-template-columns: 1fr; } figure:nth-child(2) .frame { margin-top: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .flame, .glow { transition-duration: .01s; }
+  .lamp.lit .flame, .bulb.on { animation: none; }
+  .reveal > * { animation-duration: .01s; animation-delay: 0s !important; }
+}
+</style>
+
+</head>
+<body>
+<audio id="bgm" src="Dheema BGM.mp3" loop preload="auto"></audio>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<div class="wrap">
+  <div class="string" id="string" aria-hidden="true"></div>
+
+  <p class="kicker">Deepavali Subhakankshalu</p>
+  <h1>Two lamps, one light.</h1>
+  <p class="sub">I couldn't be there tonight, so I sent a little light instead. Tap the button and watch it travel to you.</p>
+
+  <div class="lamps" id="lamps">
+    <div class="path" aria-hidden="true"></div>
+    <div class="spark" id="spark" aria-hidden="true"></div>
+
+    <div class="lamp" id="lampA">
+      <div class="glow"></div>
+      <svg viewBox="0 0 200 130" role="img" aria-label="A diya lamp">
+        <defs>
+          <linearGradient id="clay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c0612f"/><stop offset="1" stop-color="#6b2a14"/></linearGradient>
+          <linearGradient id="fl" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff5a1a"/><stop offset=".6" stop-color="#ffb627"/><stop offset="1" stop-color="#fff3c9"/></linearGradient>
+        </defs>
+        <g class="flame"><g class="flame-in"><path d="M100 66 C84 46 95 28 100 6 C105 28 116 46 100 66Z" fill="url(#fl)"/><path d="M100 64 C93 54 98 44 100 34 C102 44 107 54 100 64Z" fill="#fffbe8" opacity=".85"/></g></g>
+        <path d="M98 76 Q100 62 102 76Z" fill="#2a1208"/>
+        <path d="M14 70 Q100 150 186 70 Q150 82 100 82 Q50 82 14 70Z" fill="url(#clay)"/>
+        <path d="M14 70 Q100 90 186 70 Q150 78 100 78 Q50 78 14 70Z" fill="#3a1608"/>
+        <ellipse cx="100" cy="116" rx="34" ry="5" fill="#000" opacity=".25"/>
+      </svg>
+      <span class="tag">Here, with me</span>
+    </div>
+
+    <div class="lamp" id="lampB">
+      <div class="glow"></div>
+      <svg viewBox="0 0 200 130" role="img" aria-label="A second diya lamp">
+        <g class="flame"><g class="flame-in"><path d="M100 66 C84 46 95 28 100 6 C105 28 116 46 100 66Z" fill="url(#fl)"/><path d="M100 64 C93 54 98 44 100 34 C102 44 107 54 100 64Z" fill="#fffbe8" opacity=".85"/></g></g>
+        <path d="M98 76 Q100 62 102 76Z" fill="#2a1208"/>
+        <path d="M14 70 Q100 150 186 70 Q150 82 100 82 Q50 82 14 70Z" fill="url(#clay)"/>
+        <path d="M14 70 Q100 90 186 70 Q150 78 100 78 Q50 78 14 70Z" fill="#3a1608"/>
+        <ellipse cx="100" cy="116" rx="34" ry="5" fill="#000" opacity=".25"/>
+      </svg>
+      <span class="tag">There, with you</span>
+    </div>
+  </div>
+
+  <div class="cta-row">
+    <button class="cta" id="cta" type="button">Light my diya for you</button>
+    <button class="mute" id="mute" type="button" hidden>Music: on</button>
+    <span class="count" id="count" aria-live="polite"></span>
+  </div>
+
+  <section id="surprise" hidden>
+    <div class="reveal">
+      <div class="photos">
+        <figure style="margin:0">
+          <div class="frame" data-sparkle><div class="in"><img id="photo1" src="45058.jpg" alt="Photo of you" hidden onload="this.hidden=false;document.getElementById('ph1').hidden=true" onerror="this.hidden=true"><span id="ph1">Photo goes here</span></div></div>
+        </figure>
+        <figure style="margin:0">
+          <div class="frame" data-sparkle><div class="in"><img id="photo2" src="45063 (2).jpg" alt="Photo of you" hidden onload="this.hidden=false;document.getElementById('ph2').hidden=true" onerror="this.hidden=true"><span id="ph2">Photo goes here</span></div></div>
+        </figure>
+      </div>
+
+      <div class="letter">
+        <h2>Happy Diwali, 💗 Bangaram 💗.</h2>
+        <p>There are a lot of miles between us tonight, but I want you to know something: I am here for you. On the good days and on the heavy ones, I'm a call away.</p>
+        <p>Look at the two lamps above. One burns where I am, one burns where you are. Distance doesn't change that it's the same light, and it's the same ❤️.</p>
+        <p>May this Diwali bring you calm, laughter and everything you've been waiting for. Tap the button again whenever you need a little more light from me.</p>
+        <div class="sign">Teja 💗</div>
+      </div>
+
+      <p class="foot">Light the lamp. Keep the love.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* string lights */
+  var str = document.getElementById("string");
+  for (var i = 0; i < 22; i++) { var b = document.createElement("span"); b.className = "bulb"; str.appendChild(b); }
+  var bulbs = str.querySelectorAll(".bulb");
+
+  /* fireworks canvas */
+  var cv = document.getElementById("fx"), ctx = cv.getContext("2d"), parts = [], running = false;
+  function fit() { var d = window.devicePixelRatio || 1; cv.width = innerWidth * d; cv.height = innerHeight * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
+  fit(); addEventListener("resize", fit);
+  var cols = ["#ffb627", "#ff7a1a", "#e8456b", "#fff3c9", "#ffd166"];
+  function burst(x, y, n) {
+    n = reduce ? Math.round(n / 4) : (innerWidth < 600 ? Math.round(n * .7) : n);
+    var c1 = cols[Math.floor(Math.random() * cols.length)], c2 = cols[Math.floor(Math.random() * cols.length)];
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * Math.PI * 2, s = 1.2 + Math.random() * 4.2;
+      parts.push({ x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 1, decay: .008 + Math.random() * .014, r: 1.2 + Math.random() * 2, c: i % 2 ? c1 : c2 });
+    }
+    if (!running) { running = true; requestAnimationFrame(tick); }
+  }
+  function tick() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    ctx.globalCompositeOperation = "lighter";
+    for (var i = parts.length - 1; i >= 0; i--) {
+      var p = parts[i];
+      p.x += p.vx; p.y += p.vy; p.vy += .045; p.vx *= .985; p.vy *= .985; p.life -= p.decay;
+      if (p.life <= 0) { parts.splice(i, 1); continue; }
+      ctx.globalAlpha = p.life; ctx.fillStyle = p.c;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
+    }
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+    if (parts.length) requestAnimationFrame(tick); else running = false;
+  }
+
+  var lampA = document.getElementById("lampA"), lampB = document.getElementById("lampB");
+  var spark = document.getElementById("spark"), lamps = document.getElementById("lamps");
+  var cta = document.getElementById("cta"), count = document.getElementById("count"), surprise = document.getElementById("surprise");
+  var stage = 0, sent = 0;
+  var bgm = document.getElementById("bgm"), mute = document.getElementById("mute");
+  bgm.volume = .6;
+  mute.addEventListener("click", function () {
+    if (bgm.paused) { bgm.play().catch(function () {}); mute.textContent = "Music: on"; }
+    else { bgm.pause(); mute.textContent = "Music: off"; }
+  });
+
+  function flamePos(l) { var r = l.querySelector("svg").getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height * .3 }; }
+
+  function lightBulbs() { bulbs.forEach(function (b, i) { setTimeout(function () { b.classList.add("on"); }, reduce ? 0 : i * 70); }); }
+
+  function travel(done) {
+    var a = flamePos(lampA), b = flamePos(lampB), box = lamps.getBoundingClientRect();
+    var ax = a.x - box.left, ay = a.y - box.top, bx = b.x - box.left, by = b.y - box.top;
+    var dur = reduce ? 10 : 1700;
+    var anim = spark.animate([
+      { transform: "translate(" + ax + "px," + ay + "px) scale(.6)", opacity: 0 },
+      { transform: "translate(" + ax + "px," + (ay - 10) + "px) scale(1)", opacity: 1, offset: .12 },
+      { transform: "translate(" + ((ax + bx) / 2) + "px," + (ay - 70) + "px) scale(1.15)", opacity: 1, offset: .55 },
+      { transform: "translate(" + bx + "px," + (by - 6) + "px) scale(1)", opacity: 1, offset: .92 },
+      { transform: "translate(" + bx + "px," + by + "px) scale(.4)", opacity: 0 }
+    ], { duration: dur, easing: "ease-in-out", fill: "forwards" });
+    /* trail of tiny sparks */
+    if (!reduce) {
+      var n = 0, t = setInterval(function () {
+        var r = spark.getBoundingClientRect();
+        if (n++ > 24) { clearInterval(t); return; }
+        parts.push({ x: r.left + 7, y: r.top + 7, vx: (Math.random() - .5) * .8, vy: Math.random() * .6, life: .8, decay: .02, r: 1.5, c: "#ffd166" });
+        if (!running) { running = true; requestAnimationFrame(tick); }
+      }, 65);
+    }
+    anim.onfinish = done;
+  }
+
+  function ripple(e) {
+    var r = cta.getBoundingClientRect(), s = Math.max(r.width, r.height), d = document.createElement("span");
+    d.className = "ripple"; d.style.width = d.style.height = s + "px";
+    d.style.left = (e.clientX - r.left - s / 2) + "px"; d.style.top = (e.clientY - r.top - s / 2) + "px";
+    cta.appendChild(d); setTimeout(function () { d.remove(); }, 750);
+  }
+
+  cta.addEventListener("click", function (e) {
+    ripple(e);
+    if (stage === 0) {
+      stage = 1;
+      bgm.play().then(function () { mute.hidden = false; }).catch(function () {});
+      cta.disabled = true; cta.style.opacity = ".7"; cta.textContent = "Sending my light…";
+      lampA.classList.add("lit");
+      var a = flamePos(lampA); burst(a.x, a.y, 28);
+      setTimeout(function () {
+        travel(function () {
+          lampB.classList.add("lit");
+          var b = flamePos(lampB); burst(b.x, b.y, 60);
+          lightBulbs();
+          setTimeout(function () { burst(innerWidth * .25, innerHeight * .3, 70); }, 250);
+          setTimeout(function () { burst(innerWidth * .75, innerHeight * .25, 70); }, 550);
+          surprise.hidden = false;
+          setTimeout(function () { surprise.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }); }, 700);
+          cta.disabled = false; cta.style.opacity = ""; cta.textContent = "Send you more light"; stage = 2;
+        });
+      }, reduce ? 0 : 900);
+    } else {
+      sent++;
+      count.textContent = sent === 1 ? "1 light sent to you" : sent + " lights sent to you";
+      burst(e.clientX, e.clientY, 80);
+      setTimeout(function () { burst(Math.random() * innerWidth, Math.random() * innerHeight * .55 + 40, 70); }, 200);
+      setTimeout(function () { burst(Math.random() * innerWidth, Math.random() * innerHeight * .55 + 40, 70); }, 420);
+    }
+  });
+
+  document.addEventListener("click", function (e) {
+    var f = e.target.closest && e.target.closest("[data-sparkle]");
+    if (f) burst(e.clientX, e.clientY, 50);
+  });
+
+})();
+</script>
+</body>
+</html>
